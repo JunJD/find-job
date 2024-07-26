@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node ./main.js"
+    "start": "node ./main.js",
+    "baidu": "node ./app/controller.js"
   },
   "dependencies": {
     "openai": "^4.24.1",
