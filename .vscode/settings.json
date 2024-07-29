@@ -1,7 +1,30 @@
 {
     "cSpell.words": [
+        "apiver",
+        "argmax",
+        "backstr",
+        "captchalist",
+        "ciphertext",
+        "codestring",
+        "Ffdsnvsoot",
         "infobars",
+        "jdata",
+        "jsonify",
         "loginbtn",
-        "proxypool"
+        "loginmerge",
+        "logintype",
+        "mkey",
+        "proxypool",
+        "qrsign",
+        "relogin",
+        "rsakey",
+        "safeflg",
+        "serverlist",
+        "softmax",
+        "staticpage",
+        "subpro",
+        "torchvision",
+        "traceid",
+        "unsqueeze"
     ]
 }
