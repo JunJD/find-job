@@ -115,9 +115,11 @@ class AutoFind {
             switchMap((loginResult) => {
                 if (loginResult.isRotateImg) {
                     reply.run().subscribe(f2 => {
-                        this.updateDsAndTk(f2, this.initS, this.initK)
-                        return f2
+                        console.log(f2, 'f2')
+                        // return this.updateDsAndTk(f2, this.initS, this.initK)
+                        // return f2
                     })
+                    return of(loginResult);
                 } else {
                     return of(loginResult);
                 }
@@ -228,7 +230,7 @@ const autoFind = new AutoFind({ cookie, initS: s, initK: k, token })
 //生成 8-14位数的随机密码
 function generateRandomPassword() { return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15); }
 
-const array = [...Array.from({ length: 100 }).map(() => ({
+const array = [...Array.from({ length: 20 }).map(() => ({
     username: "天平地成",
     password: generateRandomPassword()
 })), {

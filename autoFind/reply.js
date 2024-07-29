@@ -5,6 +5,8 @@ import { from, of } from "rxjs";
 import { catchError, switchMap } from 'rxjs/operators';
 import FormData from 'form-data'
 import crypto from 'crypto';
+import pkg from 'js-sha3';
+const { sha3_256 } = pkg;
 // import fs from 'node:fs';
 class Reply {
     count = 0;
@@ -30,16 +32,16 @@ class Reply {
                 const mv2 = this.generateTrajectorySpin(ran2)
                 const ran1 = acC < 0.5 ? 1 : 2
                 const distance = angle * 238 / 360
-                const mv1 = generate_trajectory(ran1, distance)
-                let _str = `{"common":{"cl":[],"mv":${mv1},"sc":[],"kb":[],"sb":[],"sd":[],"sm":[],"cr":{"screenTop":0,"screenLeft":0,"clientWidth":1920,"clientHeight":919,"screenWidth":1920,"screenHeight":1080,"availWidth":1920,"availHeight":1040,"outerWidth":1920,"outerHeight":1040,"scrollWidth":1920,"scrollHeight":1920},"simu":0},"backstr":"${back_str}","captchalist":{"spin-0":{"cr":{"left":815,"top":307,"width":290,"height":280},"back":{"left":884,"top":351,"width":152,"height":152},"mv":${mv2},"ac_c":${ac_c},"p":{}}}}`;
+                const mv1 = this.generateTrajectory(ran1, distance)
+                let _str = `{"common":{"cl":[],"mv":${mv1},"sc":[],"kb":[],"sb":[],"sd":[],"sm":[],"cr":{"screenTop":0,"screenLeft":0,"clientWidth":1920,"clientHeight":919,"screenWidth":1920,"screenHeight":1080,"availWidth":1920,"availHeight":1040,"outerWidth":1920,"outerHeight":1040,"scrollWidth":1920,"scrollHeight":1920},"simu":0},"backstr":"${backStr}","captchalist":{"spin-0":{"cr":{"left":815,"top":307,"width":290,"height":280},"back":{"left":884,"top":351,"width":152,"height":152},"mv":${mv2},"ac_c":${acC},"p":{}}}}`;
                 _str = _str.replace(/\s/g, '');
                 console.log(_str);
-                const key = get_new_key(this.as)
+                const key = this.get_new_key(this.as)
                 const f1 = this.aesEncrypt(_str, key);
                 // getF2
-                
+
                 const need_encrypt = `{"common_en":"${f1}","backstr":"${backStr}"}`.replace(' ', '')
-                const key2 = get_new_key(this.as)
+                const key2 = this.get_new_key(this.as)
                 const f2 = this.aesEncrypt(need_encrypt, key2);
                 return of({ f2 });
             }),
@@ -180,7 +182,7 @@ class Reply {
     }
 
     generateTrajectory(numPoints, totalDistance) {
-        const currentTime = Date.now();
+        let currentTime = Date.now();
         let result = [];
 
         if (numPoints === 0) {
@@ -231,7 +233,7 @@ class Reply {
         }
         return null;
     }
-    
+
     get_new_key(_as) {
         const mode_dict = {
             "DZ": ["0", "1", "2", "3", "4"],
@@ -244,10 +246,10 @@ class Reply {
             "o": ["U", "V", "W", "X", "Y", "Z", "u", "v", "w", "x", "y", "z"],
             "q4": 2
         };
-    
+
         let r = _as[_as.length - 1];
         let data = `${_as}${mode_dict["GU"]}`;
-    
+
         let mess;
         if (mode_dict['FB'].includes(r)) {
             mess = crypto.createHash('md5').update(data).digest('hex');
@@ -272,17 +274,17 @@ class Reply {
         const padding = Buffer.alloc(padLength, 0);
         return Buffer.concat([buffer, padding]);
     }
-    
+
     aesEncrypt(_str, key) {
         const plaintextBytes = Buffer.from(_str, 'utf-8');
         const cipher = crypto.createCipheriv('aes-128-ecb', Buffer.from(key, 'utf-8'), null);
         cipher.setAutoPadding(false); // Disable auto padding
-        const paddedPlaintext = zeroPad(plaintextBytes, cipher.getBlockSize());
+        const paddedPlaintext = this.zeroPad(plaintextBytes, cipher.blockSize);
         const ciphertext = Buffer.concat([cipher.update(paddedPlaintext), cipher.final()]);
         const encodedCiphertext = ciphertext.toString('base64');
         return encodedCiphertext;
     }
-    
+
 }
 
 export default Reply
